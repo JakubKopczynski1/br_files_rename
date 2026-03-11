@@ -1,33 +1,28 @@
 import os
 import shutil
+import sys
 
-# Source directory (where all your folders with MP3 files are)
-source_dir = 'C:/Users/jakub/Desktop/br_update_files_namechange'
+source_dir = 'C:/Users/jakub/Desktop/br_harvest_downloads/files'
+destination_dir = 'C:/Users/jakub/Desktop/br_update'
 
-# Destination directory (where you want to move all the MP3 files)
-destination_dir = 'C:/Users/jakub/Desktop/br_update_files_short'
+os.makedirs(destination_dir, exist_ok=True)
 
-# Ensure the destination directory exists
-if not os.path.exists(destination_dir):
-    os.makedirs(destination_dir)
-
-# Initialize counter for moved files
 moved_count = 0
 
-# Step 1: Walk through each folder and subfolder in the source directory
 for root, dirs, files in os.walk(source_dir):
     for file in files:
-        # Step 2: Check if the file has a .mp3 extension
         if file.lower().endswith('.mp3'):
-            # Step 3: Get the full file path
-            file_path = os.path.join(root, file)
+            source_path = os.path.join(root, file)
+            destination_path = os.path.join(destination_dir, file)
 
-            # Step 4: Move the file to the destination directory
             try:
-                shutil.move(file_path, destination_dir)
-            except Exception as e:
-                print(f'Error moving {file}: {e}')
-            # Increment counter for renamed files
-            moved_count += 1
+                shutil.move(source_path, destination_path)
 
-print("Total MP3 files moved:", moved_count)
+                moved_count += 1
+                sys.stdout.write(f'\rFiles moved: {moved_count}')
+                sys.stdout.flush()
+
+            except Exception as e:
+                print(f'\nError moving {file}: {e}')
+
+print(f'\nFinished! Total MP3 files moved: {moved_count}')
